@@ -6,7 +6,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Detects left and right swipes across a view.
+ * Detects up, down, left, and right swipe across screen
  */
 public class OnSwipeTouchListener implements View.OnTouchListener {
 

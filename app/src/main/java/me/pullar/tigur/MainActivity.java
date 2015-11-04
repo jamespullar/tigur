@@ -14,10 +14,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class MainActivity extends AppCompatActivity {
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -37,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
 
-    private ImageView mImageView;
     private View mContentView;
     private boolean mVisible;
     private ArrayList<Integer> mImages;
@@ -50,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mVisible = true;
-        mImageView = (ImageView) findViewById(R.id.fullscreen_image_content);
         mContentView = findViewById(R.id.fullscreen_content);
 
         mImages = new ArrayList<>();
@@ -62,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         mImages.add(R.drawable.image6);
         mImageIterator = mImages.iterator();
 
-        // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,12 +85,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadImage(){
         if(mImageIterator.hasNext()) {
-            Picasso.with(mImageView.getContext())
+            Picasso.with(this)
                     .load(mImageIterator.next())
                     .rotate(90)
                     .fit()
                     .centerInside()
-                    .into(mImageView);
+                    .into((ImageView) mContentView);
         } else {
             mImageIterator = mImages.iterator();
             loadImage();
