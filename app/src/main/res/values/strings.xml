@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">tigur</string>
+
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="swipe_left">You swiped LEFT!</string>
+    <string name="swipe_right">You swiped RIGHT!</string>
+    <string name="swipe_up">You swiped UP!</string>
+    <string name="swipe_down">You swiped DOWN!</string>
+</resources>
