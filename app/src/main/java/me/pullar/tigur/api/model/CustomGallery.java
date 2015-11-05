@@ -9,8 +9,8 @@ public class CustomGallery {
 
     private String link;
     private Integer itemCount;
-    private GalleryImage[] galleryImages;
-    private GalleryAlbum[] galleryAlbums;
+    private List<GalleryImage> galleryImages;
+    private List<GalleryAlbum> galleryAlbums;
 
     public String getLink() {
         return link;
@@ -20,11 +20,11 @@ public class CustomGallery {
         return itemCount;
     }
 
-    public GalleryImage[] getGalleryImages() {
+    public List<GalleryImage> getGalleryImages() {
         return galleryImages;
     }
 
-    public GalleryAlbum[] getGalleryAlbums() {
+    public List<GalleryAlbum> getGalleryAlbums() {
         return galleryAlbums;
     }
 

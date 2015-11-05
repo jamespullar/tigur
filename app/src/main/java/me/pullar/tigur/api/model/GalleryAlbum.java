@@ -1,5 +1,7 @@
 package me.pullar.tigur.api.model;
 
+import java.util.List;
+
 /**
  * Created by jamespullar on 11/4/15.
  */
@@ -12,7 +14,7 @@ public class GalleryAlbum {
     private Integer coverHeight;
     private String link;
     private boolean isAlbum;
-    private Image[] images;
+    private List<Image> images;
 
     public String getId() {
         return id;
@@ -42,7 +44,7 @@ public class GalleryAlbum {
         return isAlbum;
     }
 
-    public Image[] getImages() {
+    public List<Image> getImages() {
         return images;
     }
 
