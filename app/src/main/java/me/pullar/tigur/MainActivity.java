@@ -6,13 +6,25 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+import me.pullar.tigur.api.ImgurApi;
+import me.pullar.tigur.api.RestClient;
+import me.pullar.tigur.api.model.Image;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
     /**
@@ -35,8 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
     private View mContentView;
     private boolean mVisible;
-    private ArrayList<Integer> mImages;
-    private Iterator<Integer> mImageIterator;
+    private Image mImage;
+    private List<Image> mImageList;
+    private ListIterator<Image> mImageIterator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +59,40 @@ public class MainActivity extends AppCompatActivity {
 
         mVisible = true;
         mContentView = findViewById(R.id.fullscreen_content);
+        mImage = new Image();
+        mImageList = new ArrayList<Image>();
 
-        mImages = new ArrayList<>();
-        mImages.add(R.drawable.image1);
-        mImages.add(R.drawable.image2);
-        mImages.add(R.drawable.image3);
-        mImages.add(R.drawable.image4);
-        mImages.add(R.drawable.image5);
-        mImages.add(R.drawable.image6);
-        mImageIterator = mImages.iterator();
+        ImgurApi imgurApi = RestClient.getClient();
+        Call<Image> call = imgurApi.loadImages();
+        call.enqueue(new Callback<Image>() {
+            @Override
+            public void onResponse(Response<Image> response, Retrofit retrofit) {
+                Log.d("MainActivity", "Status Code = " + response.code());
+                if (response.isSuccess()) {
+                    Image result = response.body();
+                    Log.d("MainActivity", "response = " + new Gson().toJson(response));
+                    mImageList.add(mImage);
+//                    for(int i=0 ; i <= result.size(); i++){
+//                        mImage.add(i, result.get(i));
+//                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("MainActivity", t.toString());
+            }
+        });
+
+//        mImages = new ArrayList<>();
+//        mImages.add(R.drawable.image1);
+//        mImages.add(R.drawable.image2);
+//        mImages.add(R.drawable.image3);
+//        mImages.add(R.drawable.image4);
+//        mImages.add(R.drawable.image5);
+//        mImages.add(R.drawable.image6);
+
+        mImageIterator = mImageList.listIterator();
 
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,19 +101,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mContentView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Snackbar.make(mContentView, R.string.long_press, Snackbar.LENGTH_LONG).show();
+                return false;
+            }
+        });
+
         mContentView.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeLeft() {
                 Snackbar.make(mContentView, R.string.swipe_left, Snackbar.LENGTH_LONG).show();
             }
+
             @Override
             public void onSwipeRight() {
                 Snackbar.make(mContentView, R.string.swipe_right, Snackbar.LENGTH_LONG).show();
             }
+
             @Override
             public void onSwipeUp() {
                 Snackbar.make(mContentView, R.string.swipe_up, Snackbar.LENGTH_LONG).show();
             }
+
             @Override
             public void onSwipeDown() {
                 Snackbar.make(mContentView, R.string.swipe_down, Snackbar.LENGTH_LONG).show();
@@ -84,15 +133,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadImage(){
-        if(mImageIterator.hasNext()) {
+        if(mImageIterator.hasNext() && mImageList.size() > 0) {
             Picasso.with(this)
-                    .load(mImageIterator.next())
+                    .load(mImageIterator.next().getLink())
                     .rotate(90)
                     .fit()
                     .centerInside()
                     .into((ImageView) mContentView);
         } else {
-            mImageIterator = mImages.iterator();
+            mImageIterator = mImageList.listIterator();
             loadImage();
         }
     }
