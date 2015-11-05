@@ -1,9 +1,9 @@
 package me.pullar.tigur.api.model;
 
 /**
- * Created by jamespullar on 11/3/15.
+ * Created by jamespullar on 11/4/15.
  */
-public class Image {
+public class GalleryImage {
 
     private Integer id;
     private String type;
@@ -18,6 +18,7 @@ public class Image {
     private String gifv;
     private String mp4;
     private String webm;
+    private Boolean isAlbum;
 
     public Integer getId() {
         return id;
@@ -69,6 +70,10 @@ public class Image {
 
     public String getWebm() {
         return webm;
+    }
+
+    public boolean isAlbum() {
+        return isAlbum;
     }
 
 }
