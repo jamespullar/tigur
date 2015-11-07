@@ -67,13 +67,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mContentView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Snackbar.make(mContentView, R.string.long_press, Snackbar.LENGTH_LONG).show();
-                return false;
-            }
-        });
+//        mContentView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                Snackbar.make(mContentView, R.string.long_press, Snackbar.LENGTH_LONG).show();
+//                return false;
+//            }
+//        });
 
         mContentView.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
