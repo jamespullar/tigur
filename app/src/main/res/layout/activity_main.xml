@@ -2,12 +2,19 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:background="@color/colorPrimary" tools:context=".MainActivity">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#000000">
-        <ImageView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
-            android:layout_height="match_parent" android:gravity="center"/>
+    <RelativeLayout android:id="@+id/splash"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <TextView android:id="@+id/splash_text" android:layout_width="fill_parent"
+            android:layout_height="fill_parent" android:text="@string/splash_text"
+            android:gravity="center" android:textSize="@dimen/abc_text_size_display_4_material"
+            android:textColor="@color/colorAccent" android:textStyle="bold"/>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
+            android:layout_height="match_parent" android:gravity="center" />
+    </RelativeLayout>
 </FrameLayout>

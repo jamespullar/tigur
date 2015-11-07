@@ -1,7 +1,6 @@
 package me.pullar.tigur;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -9,9 +8,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -52,19 +52,23 @@ public class MainActivity extends AppCompatActivity {
     private boolean mVisible;
     private List<Image> mImageList;
     private ListIterator<Image> mImageIterator;
+    private RelativeLayout mSplash;
+    private RelativeLayout mScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContentView = findViewById(R.id.fullscreen_content);
+        mSplash = (RelativeLayout) findViewById(R.id.splash);
+        mScreen = (RelativeLayout) findViewById(R.id.screen);
 
         loadImages();
 
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayImage();
+                Snackbar.make(mContentView, R.string.on_click, Snackbar.LENGTH_LONG).show();
             }
         });
 
@@ -79,12 +83,12 @@ public class MainActivity extends AppCompatActivity {
         mContentView.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeLeft() {
-                Snackbar.make(mContentView, R.string.swipe_left, Snackbar.LENGTH_LONG).show();
+                displayNextImage();
             }
 
             @Override
             public void onSwipeRight() {
-                Snackbar.make(mContentView, R.string.swipe_right, Snackbar.LENGTH_LONG).show();
+                displayPreviousImage();
             }
 
             @Override
@@ -119,7 +123,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void displayImage() {
+    private void displayPreviousImage() {
+        if (mSplash.isShown()) {
+            mSplash.setVisibility(View.GONE);
+        }
+        if (mImageIterator.hasPrevious()) {
+            Picasso.with(getApplicationContext())
+                    .load(mImageIterator.previous().getLink())
+                    .fit()
+                    .centerInside()
+                    .into((ImageView) mContentView);
+        } else {
+            mImageIterator = mImageList.listIterator();
+            displayNextImage();
+        }
+    }
+
+    private void displayNextImage() {
+        if (mSplash.isShown()) {
+            mSplash.setVisibility(View.GONE);
+        }
         if (mImageIterator.hasNext()) {
             Picasso.with(getApplicationContext())
                     .load(mImageIterator.next().getLink())
@@ -128,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     .into((ImageView) mContentView);
         } else {
             mImageIterator = mImageList.listIterator();
-            displayImage();
+            displayNextImage();
         }
     }
 

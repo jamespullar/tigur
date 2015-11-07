@@ -6,4 +6,6 @@
     <string name="swipe_right">You swiped RIGHT!</string>
     <string name="swipe_up">You swiped UP!</string>
     <string name="swipe_down">You swiped DOWN!</string>
+    <string name="splash_text">Tigur</string>
+    <string name="on_click">You CLICKED!</string>
 </resources>
