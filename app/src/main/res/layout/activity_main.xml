@@ -1,20 +1,36 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/screen"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:background="@color/colorPrimary" tools:context=".MainActivity">
 
     <RelativeLayout android:id="@+id/splash"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
-        <TextView android:id="@+id/splash_text" android:layout_width="fill_parent"
-            android:layout_height="fill_parent" android:text="@string/splash_text"
-            android:gravity="center" android:textSize="@dimen/abc_text_size_display_4_material"
-            android:textColor="@color/colorAccent" android:textStyle="bold"/>
+            <TextView android:id="@+id/splash_text" android:layout_width="fill_parent"
+                android:layout_height="fill_parent" android:text="@string/splash_text"
+                android:gravity="center" android:textSize="@dimen/abc_text_size_display_4_material"
+                android:textColor="@color/colorAccent" android:textStyle="bold"/>
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <ImageView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
-            android:layout_height="match_parent" android:gravity="center" />
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <ImageView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <FrameLayout
+                android:id="@+id/image_info_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/image_info_title"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="bottom|left"
+                    android:textColor="@android:color/tertiary_text_dark" />
+            </FrameLayout>
+        </FrameLayout>
     </RelativeLayout>
 </FrameLayout>

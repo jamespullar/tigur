@@ -7,10 +7,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -53,7 +56,11 @@ public class MainActivity extends AppCompatActivity {
     private List<Image> mImageList;
     private ListIterator<Image> mImageIterator;
     private RelativeLayout mSplash;
-    private RelativeLayout mScreen;
+    private FrameLayout mScreen;
+    private Image mCurrentImage;
+    private View mImageInfo;
+    private TextView mImageInfoTitle;
+    private boolean mImageInfoDisplayed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +68,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mContentView = findViewById(R.id.fullscreen_content);
         mSplash = (RelativeLayout) findViewById(R.id.splash);
-        mScreen = (RelativeLayout) findViewById(R.id.screen);
+        mScreen = (FrameLayout) findViewById(R.id.screen);
+        mImageInfo = findViewById(R.id.image_info_overlay);
+        mImageInfoTitle = (TextView) findViewById(R.id.image_info_title);
+        mImageInfoDisplayed = false;
 
         loadImages();
 
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(mContentView, R.string.on_click, Snackbar.LENGTH_LONG).show();
+                toggleImageInfo();
             }
         });
 
@@ -127,15 +137,18 @@ public class MainActivity extends AppCompatActivity {
         if (mSplash.isShown()) {
             mSplash.setVisibility(View.GONE);
         }
-        if (mImageIterator.hasPrevious()) {
-            Picasso.with(getApplicationContext())
-                    .load(mImageIterator.previous().getLink())
-                    .fit()
-                    .centerInside()
-                    .into((ImageView) mContentView);
-        } else {
-            mImageIterator = mImageList.listIterator();
-            displayNextImage();
+        if (mImageList != null) {
+            if (mImageIterator.hasPrevious()) {
+                clearImageInfo();
+                mCurrentImage = mImageIterator.previous();
+                Picasso.with(getApplicationContext())
+                        .load(mCurrentImage.getLink())
+                        .fit()
+                        .centerInside()
+                        .into((ImageView) mContentView);
+            } else {
+                mImageIterator = mImageList.listIterator();
+            }
         }
     }
 
@@ -143,15 +156,44 @@ public class MainActivity extends AppCompatActivity {
         if (mSplash.isShown()) {
             mSplash.setVisibility(View.GONE);
         }
-        if (mImageIterator.hasNext()) {
-            Picasso.with(getApplicationContext())
-                    .load(mImageIterator.next().getLink())
-                    .fit()
-                    .centerInside()
-                    .into((ImageView) mContentView);
-        } else {
-            mImageIterator = mImageList.listIterator();
-            displayNextImage();
+        if (mImageList != null) {
+            if (mImageIterator.hasNext()) {
+                clearImageInfo();
+                mCurrentImage = mImageIterator.next();
+                Picasso.with(getApplicationContext())
+                        .load(mCurrentImage.getLink())
+                        .fit()
+                        .centerInside()
+                        .into((ImageView) mContentView);
+            } else {
+                mImageIterator = mImageList.listIterator();
+                displayNextImage();
+            }
+        }
+    }
+
+    private void toggleImageInfo() {
+        if (mCurrentImage != null) {
+            if (!mImageInfoDisplayed) {
+                int opacity = 200;
+                mImageInfo.setBackgroundColor(opacity * 0x1000000); // Black with a variable alpha
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 100);
+                params.gravity = Gravity.BOTTOM;
+                mImageInfo.setLayoutParams(params);
+                mImageInfoTitle.setText(mCurrentImage.getTitle());
+                mImageInfo.setVisibility(View.VISIBLE);
+                mImageInfo.invalidate();
+            } else {
+                mImageInfo.setVisibility(View.GONE);
+            }
+            mImageInfoDisplayed = !mImageInfoDisplayed;
+        }
+    }
+
+    private void clearImageInfo() {
+        if (mCurrentImage != null) {
+            mImageInfo.setVisibility(View.GONE);
+            mImageInfoDisplayed = false;
         }
     }
 
