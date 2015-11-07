@@ -1,6 +1,7 @@
 package me.pullar.tigur;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -105,21 +106,15 @@ public class MainActivity extends AppCompatActivity {
         getImages.enqueue(new Callback<Images>() {
             @Override
             public void onResponse(Response<Images> response, Retrofit retrofit) {
-                Log.d("MainActivity", "Status Code = " + response.code());
                 if (response.isSuccess()) {
-                    Log.d("MainActivity", "response = " + new Gson().toJson(response.body()));
-
                     mImageList = response.body().getImages();
                     mImageIterator = mImageList.listIterator();
-                } else {
-                    Log.d("MainActivity", "Response failure = " + response.body());
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
                 Log.d("MainActivity", t.getMessage());
-                Log.d("MainActivity", t.getLocalizedMessage());
             }
         });
     }
