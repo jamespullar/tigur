@@ -131,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
                     .fit()
                     .centerInside()
                     .into((ImageView) mContentView);
+        } else {
+            mImageIterator = mImageList.listIterator();
+            displayImage();
         }
     }
 
