@@ -128,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
         if (mImageIterator.hasNext()) {
             Picasso.with(getApplicationContext())
                     .load(mImageIterator.next().getLink())
-                    .rotate(90)
                     .fit()
                     .centerInside()
                     .into((ImageView) mContentView);
