@@ -13,14 +13,13 @@ import android.widget.ImageView;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
 import me.pullar.tigur.api.ImgurApi;
 import me.pullar.tigur.api.RestClient;
 import me.pullar.tigur.api.model.Image;
+import me.pullar.tigur.api.model.Images;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -45,59 +44,26 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
 
+    private ImgurApi imgurApi;
+    private Call<Images> getImages;
+
     private View mContentView;
     private boolean mVisible;
-    private Image mImage;
     private List<Image> mImageList;
     private ListIterator<Image> mImageIterator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-
-        mVisible = true;
         mContentView = findViewById(R.id.fullscreen_content);
-        mImage = new Image();
-        mImageList = new ArrayList<Image>();
 
-        ImgurApi imgurApi = RestClient.getClient();
-        Call<Image> call = imgurApi.loadImages();
-        call.enqueue(new Callback<Image>() {
-            @Override
-            public void onResponse(Response<Image> response, Retrofit retrofit) {
-                Log.d("MainActivity", "Status Code = " + response.code());
-                if (response.isSuccess()) {
-                    Image result = response.body();
-                    Log.d("MainActivity", "response = " + new Gson().toJson(response));
-                    mImageList.add(mImage);
-//                    for(int i=0 ; i <= result.size(); i++){
-//                        mImage.add(i, result.get(i));
-//                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.d("MainActivity", t.toString());
-            }
-        });
-
-//        mImages = new ArrayList<>();
-//        mImages.add(R.drawable.image1);
-//        mImages.add(R.drawable.image2);
-//        mImages.add(R.drawable.image3);
-//        mImages.add(R.drawable.image4);
-//        mImages.add(R.drawable.image5);
-//        mImages.add(R.drawable.image6);
-
-        mImageIterator = mImageList.listIterator();
+        loadImages();
 
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadImage();
+                displayImage();
             }
         });
 
@@ -132,17 +98,40 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadImage(){
-        if(mImageIterator.hasNext() && mImageList.size() > 0) {
-            Picasso.with(this)
+    private void loadImages(){
+        imgurApi = RestClient.getClient();
+        getImages = imgurApi.getImages();
+
+        getImages.enqueue(new Callback<Images>() {
+            @Override
+            public void onResponse(Response<Images> response, Retrofit retrofit) {
+                Log.d("MainActivity", "Status Code = " + response.code());
+                if (response.isSuccess()) {
+                    Log.d("MainActivity", "response = " + new Gson().toJson(response.body()));
+
+                    mImageList = response.body().getImages();
+                    mImageIterator = mImageList.listIterator();
+                } else {
+                    Log.d("MainActivity", "Response failure = " + response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("MainActivity", t.getMessage());
+                Log.d("MainActivity", t.getLocalizedMessage());
+            }
+        });
+    }
+
+    private void displayImage() {
+        if (mImageIterator.hasNext()) {
+            Picasso.with(getApplicationContext())
                     .load(mImageIterator.next().getLink())
                     .rotate(90)
                     .fit()
                     .centerInside()
                     .into((ImageView) mContentView);
-        } else {
-            mImageIterator = mImageList.listIterator();
-            loadImage();
         }
     }
 

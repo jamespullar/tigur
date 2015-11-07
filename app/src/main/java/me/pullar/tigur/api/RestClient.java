@@ -2,6 +2,7 @@ package me.pullar.tigur.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.OkHttpClient;
 
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
@@ -12,21 +13,20 @@ import retrofit.Retrofit;
 public class RestClient {
 
     private static final String BASE_URL = "https://api.imgur.com/3/";
-    private static ImgurApi imgurApi;
+    private static OkHttpClient httpClient = new OkHttpClient();
 
     public static ImgurApi getClient() {
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                 .create();
 
-        Retrofit client = new Retrofit.Builder()
+        Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
+                .addConverterFactory(GsonConverterFactory.create());
 
-        imgurApi = client.create(ImgurApi.class);
+        Retrofit retrofit = builder.client(httpClient).build();
 
-        return imgurApi;
+        return retrofit.create(ImgurApi.class);
     }
 
 }

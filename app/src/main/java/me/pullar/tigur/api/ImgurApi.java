@@ -1,6 +1,6 @@
 package me.pullar.tigur.api;
 
-import me.pullar.tigur.api.model.Image;
+import me.pullar.tigur.api.model.Images;
 import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Headers;
@@ -12,6 +12,6 @@ public interface ImgurApi {
 
     @Headers({"Authorization: Client-ID 0d3b867e5a368c2"})
     @GET("gallery/r/aww")
-    Call<Image> loadImages();
+    Call<Images> getImages();
 
 }
