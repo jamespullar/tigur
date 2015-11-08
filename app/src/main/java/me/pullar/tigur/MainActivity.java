@@ -11,7 +11,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -51,12 +50,11 @@ public class MainActivity extends AppCompatActivity {
     private ImgurApi imgurApi;
     private Call<Images> getImages;
 
-    private View mContentView;
+    private View mImageContent;
     private boolean mVisible;
     private List<Image> mImageList;
     private ListIterator<Image> mImageIterator;
     private RelativeLayout mSplash;
-    private FrameLayout mScreen;
     private Image mCurrentImage;
     private View mImageInfo;
     private TextView mImageInfoTitle;
@@ -66,31 +64,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mContentView = findViewById(R.id.fullscreen_content);
+        mImageContent = findViewById(R.id.fullscreen_content);
         mSplash = (RelativeLayout) findViewById(R.id.splash);
-        mScreen = (FrameLayout) findViewById(R.id.screen);
         mImageInfo = findViewById(R.id.image_info_overlay);
         mImageInfoTitle = (TextView) findViewById(R.id.image_info_title);
         mImageInfoDisplayed = false;
 
         loadImages();
 
-        mContentView.setOnClickListener(new View.OnClickListener() {
+        mImageContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toggleImageInfo();
             }
         });
 
-//        mContentView.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                Snackbar.make(mContentView, R.string.long_press, Snackbar.LENGTH_LONG).show();
-//                return false;
-//            }
-//        });
-
-        mContentView.setOnTouchListener(new OnSwipeTouchListener(this) {
+        getWindow().getDecorView().getRootView().setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeLeft() {
                 displayNextImage();
@@ -103,12 +92,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwipeUp() {
-                Snackbar.make(mContentView, R.string.swipe_up, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mImageContent, R.string.swipe_up, Snackbar.LENGTH_LONG).show();
             }
 
             @Override
             public void onSwipeDown() {
-                Snackbar.make(mContentView, R.string.swipe_down, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mImageContent, R.string.swipe_down, Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -120,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
         getImages.enqueue(new Callback<Images>() {
             @Override
             public void onResponse(Response<Images> response, Retrofit retrofit) {
+                Log.d("MainActivity", "Response Code = " + response.code());
+                Log.d("MainActivity", "Response Body = " + response.body().getImages());
                 if (response.isSuccess()) {
                     mImageList = response.body().getImages();
                     mImageIterator = mImageList.listIterator();
@@ -139,13 +130,13 @@ public class MainActivity extends AppCompatActivity {
         }
         if (mImageList != null) {
             if (mImageIterator.hasPrevious()) {
-                clearImageInfo();
+                hideImageInfo();
                 mCurrentImage = mImageIterator.previous();
                 Picasso.with(getApplicationContext())
                         .load(mCurrentImage.getLink())
                         .fit()
                         .centerInside()
-                        .into((ImageView) mContentView);
+                        .into((ImageView) mImageContent);
             } else {
                 mImageIterator = mImageList.listIterator();
             }
@@ -158,16 +149,16 @@ public class MainActivity extends AppCompatActivity {
         }
         if (mImageList != null) {
             if (mImageIterator.hasNext()) {
-                clearImageInfo();
+                hideImageInfo();
                 mCurrentImage = mImageIterator.next();
                 Picasso.with(getApplicationContext())
                         .load(mCurrentImage.getLink())
                         .fit()
                         .centerInside()
-                        .into((ImageView) mContentView);
+                        .into((ImageView) mImageContent);
             } else {
                 mImageIterator = mImageList.listIterator();
-                displayNextImage();
+                displayNextImage(); // Loop to beginning of images when you reach the end
             }
         }
     }
@@ -178,10 +169,10 @@ public class MainActivity extends AppCompatActivity {
                 int opacity = 200;
                 mImageInfo.setBackgroundColor(opacity * 0x1000000); // Black with a variable alpha
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 100);
-                params.gravity = Gravity.BOTTOM;
+                params.gravity = Gravity.CENTER;
                 mImageInfo.setLayoutParams(params);
-                mImageInfoTitle.setText(mCurrentImage.getTitle());
                 mImageInfo.setVisibility(View.VISIBLE);
+                mImageInfoTitle.setText(mCurrentImage.getTitle());
                 mImageInfo.invalidate();
             } else {
                 mImageInfo.setVisibility(View.GONE);
@@ -190,7 +181,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void clearImageInfo() {
+    private void showImageInfo() {
+        //TODO: Refactor toggleImageInfo to use this and hideImageInfo
+    }
+
+    private void hideImageInfo() {
         if (mCurrentImage != null) {
             mImageInfo.setVisibility(View.GONE);
             mImageInfoDisplayed = false;
@@ -239,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
             // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+            mImageContent.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
