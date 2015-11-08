@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -50,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private ImgurApi imgurApi;
     private Call<Images> getImages;
 
-    private View mImageContent;
+    private View mScreen;
+    private View mImage;
     private boolean mVisible;
     private List<Image> mImageList;
     private ListIterator<Image> mImageIterator;
@@ -59,12 +61,15 @@ public class MainActivity extends AppCompatActivity {
     private View mImageInfo;
     private TextView mImageInfoTitle;
     private boolean mImageInfoDisplayed;
+    private FrameLayout mImageContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mImageContent = findViewById(R.id.fullscreen_content);
+        mScreen = findViewById(android.R.id.content);
+        mImageContent = (FrameLayout) findViewById(R.id.image_content);
+        mImage = findViewById(R.id.image);
         mSplash = (RelativeLayout) findViewById(R.id.splash);
         mImageInfo = findViewById(R.id.image_info_overlay);
         mImageInfoTitle = (TextView) findViewById(R.id.image_info_title);
@@ -72,14 +77,15 @@ public class MainActivity extends AppCompatActivity {
 
         loadImages();
 
-        mImageContent.setOnClickListener(new View.OnClickListener() {
+        mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Snackbar.make(mImage, R.string.on_click, Snackbar.LENGTH_LONG).show();
                 toggleImageInfo();
             }
         });
 
-        getWindow().getDecorView().getRootView().setOnTouchListener(new OnSwipeTouchListener(this) {
+        mImage.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeLeft() {
                 displayNextImage();
@@ -92,12 +98,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwipeUp() {
-                Snackbar.make(mImageContent, R.string.swipe_up, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mImage, R.string.swipe_up, Snackbar.LENGTH_LONG).show();
             }
 
             @Override
             public void onSwipeDown() {
-                Snackbar.make(mImageContent, R.string.swipe_down, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mImage, R.string.swipe_down, Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -124,6 +130,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void displayNextImage() {
+        // If the splash screen is visible, remove it from the screen
+        if (mSplash.isShown()) {
+            mSplash.setVisibility(View.GONE);
+        }
+
+        // Grab the next image from the image list if one exists, otherwise reset and loop
+        if (mImageList != null) {
+            if (mImageIterator.hasNext()) {
+                hideImageInfo();
+                mCurrentImage = mImageIterator.next();
+                Log.d("MainActivity", mCurrentImage.getLink());
+
+                Picasso.with(getApplicationContext())
+                        .load(mCurrentImage.getLink())
+                        .fit()
+                        .centerInside()
+                        .into((ImageView) mImage);
+            } else {
+                mImageIterator = mImageList.listIterator();
+                displayNextImage(); // Loop to beginning of images when you reach the end
+            }
+        }
+    }
+
     private void displayPreviousImage() {
         if (mSplash.isShown()) {
             mSplash.setVisibility(View.GONE);
@@ -136,29 +167,9 @@ public class MainActivity extends AppCompatActivity {
                         .load(mCurrentImage.getLink())
                         .fit()
                         .centerInside()
-                        .into((ImageView) mImageContent);
+                        .into((ImageView) mImage);
             } else {
                 mImageIterator = mImageList.listIterator();
-            }
-        }
-    }
-
-    private void displayNextImage() {
-        if (mSplash.isShown()) {
-            mSplash.setVisibility(View.GONE);
-        }
-        if (mImageList != null) {
-            if (mImageIterator.hasNext()) {
-                hideImageInfo();
-                mCurrentImage = mImageIterator.next();
-                Picasso.with(getApplicationContext())
-                        .load(mCurrentImage.getLink())
-                        .fit()
-                        .centerInside()
-                        .into((ImageView) mImageContent);
-            } else {
-                mImageIterator = mImageList.listIterator();
-                displayNextImage(); // Loop to beginning of images when you reach the end
             }
         }
     }
@@ -174,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 mImageInfo.setVisibility(View.VISIBLE);
                 mImageInfoTitle.setText(mCurrentImage.getTitle());
                 mImageInfo.invalidate();
+                Snackbar.make(mImage, mCurrentImage.getTitle(), Snackbar.LENGTH_LONG).show();
             } else {
                 mImageInfo.setVisibility(View.GONE);
             }
@@ -234,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
             // at compile-time and do nothing on earlier devices.
-            mImageContent.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+            mImage.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
