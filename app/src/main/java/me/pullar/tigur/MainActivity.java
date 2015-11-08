@@ -83,7 +83,9 @@ public class MainActivity extends AppCompatActivity {
         mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                toggleImageInfo();
+                if(mImageInfoDisplayed) {
+                    hideImageInfo();
+                }
             }
         });
 
@@ -100,12 +102,19 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwipeUp() {
-                Snackbar.make(mImage, R.string.swipe_up, Snackbar.LENGTH_LONG).show();
+                if(!mImageInfoDisplayed) {
+                    showImageInfo();
+                }
             }
 
             @Override
             public void onSwipeDown() {
-                Snackbar.make(mImage, R.string.swipe_down, Snackbar.LENGTH_LONG).show();
+                if(mImageInfoDisplayed) {
+                    hideImageInfo();
+                }
+                else {
+                    Snackbar.make(mImage, R.string.swipe_down, Snackbar.LENGTH_LONG).show();
+                }
             }
         });
     }
