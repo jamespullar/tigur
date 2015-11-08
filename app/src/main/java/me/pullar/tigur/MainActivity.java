@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(mImage, R.string.on_click, Snackbar.LENGTH_LONG).show();
                 toggleImageInfo();
             }
         });
@@ -177,24 +176,23 @@ public class MainActivity extends AppCompatActivity {
     private void toggleImageInfo() {
         if (mCurrentImage != null) {
             if (!mImageInfoDisplayed) {
-                int opacity = 200;
-                mImageInfo.setBackgroundColor(opacity * 0x1000000); // Black with a variable alpha
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 100);
-                params.gravity = Gravity.CENTER;
-                mImageInfo.setLayoutParams(params);
-                mImageInfo.setVisibility(View.VISIBLE);
-                mImageInfoTitle.setText(mCurrentImage.getTitle());
-                mImageInfo.invalidate();
-                Snackbar.make(mImage, mCurrentImage.getTitle(), Snackbar.LENGTH_LONG).show();
+                showImageInfo();
             } else {
-                mImageInfo.setVisibility(View.GONE);
+                hideImageInfo();
             }
-            mImageInfoDisplayed = !mImageInfoDisplayed;
         }
     }
 
     private void showImageInfo() {
-        //TODO: Refactor toggleImageInfo to use this and hideImageInfo
+        int opacity = 200;
+        mImageInfo.setBackgroundColor(opacity * 0x1000000); // Black with a variable alpha
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 100);
+        params.gravity = Gravity.CENTER;
+        mImageInfo.setLayoutParams(params);
+        mImageInfo.setVisibility(View.VISIBLE);
+        mImageInfoTitle.setText(mCurrentImage.getTitle());
+        mImageInfo.invalidate();
+        mImageInfoDisplayed = true;
     }
 
     private void hideImageInfo() {
