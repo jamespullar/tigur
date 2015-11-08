@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mImageInfoTitle;
     private boolean mImageInfoDisplayed;
     private FrameLayout mImageContent;
+    private TextView mImageInfoViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         mSplash = (RelativeLayout) findViewById(R.id.splash);
         mImageInfo = findViewById(R.id.image_info_overlay);
         mImageInfoTitle = (TextView) findViewById(R.id.image_info_title);
+        mImageInfoViews = (TextView) findViewById(R.id.image_info_views);
         mImageInfoDisplayed = false;
 
         loadImages();
@@ -186,11 +189,12 @@ public class MainActivity extends AppCompatActivity {
     private void showImageInfo() {
         int opacity = 200;
         mImageInfo.setBackgroundColor(opacity * 0x1000000); // Black with a variable alpha
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 100);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(mImage.getWidth(), mImage.getHeight());
         params.gravity = Gravity.CENTER;
         mImageInfo.setLayoutParams(params);
         mImageInfo.setVisibility(View.VISIBLE);
         mImageInfoTitle.setText(mCurrentImage.getTitle());
+        mImageInfoViews.setText("Views: " + mCurrentImage.getViews().toString());
         mImageInfo.invalidate();
         mImageInfoDisplayed = true;
     }

@@ -8,4 +8,5 @@
     <string name="swipe_down">You swiped DOWN!</string>
     <string name="splash_text">Tigur</string>
     <string name="on_click">You CLICKED!</string>
+    <string name="info_image_views">Total Views:</string>
 </resources>
