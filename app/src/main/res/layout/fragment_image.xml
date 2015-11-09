@@ -1,0 +1,21 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools" android:id="@+id/image_content"
+android:layout_width="match_parent" android:layout_height="match_parent"
+android:orientation="vertical" tools:context="me.pullar.tigur.ImageFragment">
+    <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+        <ImageView android:id="@+id/image"
+        android:layout_width="match_parent" android:layout_height="match_parent" />
+        <RelativeLayout android:id="@+id/image_info_overlay"
+        android:layout_width="match_parent" android:layout_height="match_parent">
+            <TextView android:id="@+id/image_info_title"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textColor="@android:color/tertiary_text_dark" />
+            <TextView android:id="@+id/image_info_views"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_below="@id/image_info_title"
+            android:textColor="@android:color/tertiary_text_dark" />
+        </RelativeLayout>
+    </FrameLayout>
+</android.support.v7.widget.CardView>

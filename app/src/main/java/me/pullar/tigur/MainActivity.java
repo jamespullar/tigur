@@ -6,6 +6,9 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -62,15 +65,17 @@ public class MainActivity extends AppCompatActivity {
     private View mImageInfo;
     private TextView mImageInfoTitle;
     private boolean mImageInfoDisplayed;
-    private FrameLayout mImageContent;
+    private CardView mImageContent;
     private TextView mImageInfoViews;
+    private RecyclerView mRvImageContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mScreen = findViewById(android.R.id.content);
-        mImageContent = (FrameLayout) findViewById(R.id.image_content);
+        mRvImageContent = (RecyclerView) findViewById(R.id.rv_image_content);
+        mImageContent = (CardView) findViewById(R.id.image_content);
         mImage = findViewById(R.id.image);
         mSplash = (RelativeLayout) findViewById(R.id.splash);
         mImageInfo = findViewById(R.id.image_info_overlay);
@@ -78,45 +83,47 @@ public class MainActivity extends AppCompatActivity {
         mImageInfoViews = (TextView) findViewById(R.id.image_info_views);
         mImageInfoDisplayed = false;
 
+        mRvImageContent = (RecyclerView) findViewById(R.id.rv_image_content);
+        mRvImageContent.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+
         loadImages();
 
-        mImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(mImageInfoDisplayed) {
-                    hideImageInfo();
-                }
-            }
-        });
+//        mImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(mImageInfoDisplayed) {
+//                    hideImageInfo();
+//                }
+//            }
+//        });
 
-        mImage.setOnTouchListener(new OnSwipeTouchListener(this) {
-            @Override
-            public void onSwipeLeft() {
-                displayNextImage();
-            }
-
-            @Override
-            public void onSwipeRight() {
-                displayPreviousImage();
-            }
-
-            @Override
-            public void onSwipeUp() {
-                if(!mImageInfoDisplayed) {
-                    showImageInfo();
-                }
-            }
-
-            @Override
-            public void onSwipeDown() {
-                if(mImageInfoDisplayed) {
-                    hideImageInfo();
-                }
-                else {
-                    Snackbar.make(mImage, R.string.swipe_down, Snackbar.LENGTH_LONG).show();
-                }
-            }
-        });
+//        mImage.setOnTouchListener(new OnSwipeTouchListener(this) {
+//            @Override
+//            public void onSwipeLeft() {
+//                displayNextImage();
+//            }
+//
+//            @Override
+//            public void onSwipeRight() {
+//                displayPreviousImage();
+//            }
+//
+//            @Override
+//            public void onSwipeUp() {
+//                if (!mImageInfoDisplayed) {
+//                    showImageInfo();
+//                }
+//            }
+//
+//            @Override
+//            public void onSwipeDown() {
+//                if (mImageInfoDisplayed) {
+//                    hideImageInfo();
+//                } else {
+//                    Snackbar.make(mImage, R.string.swipe_down, Snackbar.LENGTH_LONG).show();
+//                }
+//            }
+//        });
     }
 
     private void loadImages(){
@@ -130,7 +137,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MainActivity", "Response Body = " + response.body().getImages());
                 if (response.isSuccess()) {
                     mImageList = response.body().getImages();
-                    mImageIterator = mImageList.listIterator();
+//                    mImageIterator = mImageList.listIterator();
+
+                    mRvImageContent.setAdapter(new ImageAdapter(response.body()));
                 }
             }
 
@@ -152,8 +161,6 @@ public class MainActivity extends AppCompatActivity {
             if (mImageIterator.hasNext()) {
                 hideImageInfo();
                 mCurrentImage = mImageIterator.next();
-                Log.d("MainActivity", mCurrentImage.getLink());
-
                 Picasso.with(getApplicationContext())
                         .load(mCurrentImage.getLink())
                         .fit()
@@ -198,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
     private void showImageInfo() {
         int opacity = 200;
         mImageInfo.setBackgroundColor(opacity * 0x1000000); // Black with a variable alpha
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(mImage.getWidth(), mImage.getHeight());
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(mImageContent.getWidth(), mImageContent.getHeight());
         params.gravity = Gravity.CENTER;
         mImageInfo.setLayoutParams(params);
         mImageInfo.setVisibility(View.VISIBLE);
