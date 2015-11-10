@@ -1,4 +1,4 @@
-package me.pullar.tigur;
+package me.pullar.tigur.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +10,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import me.pullar.tigur.ui.fragment.ImageHolder;
+import me.pullar.tigur.R;
 import me.pullar.tigur.api.model.Image;
 import me.pullar.tigur.api.model.Images;
 
@@ -28,15 +30,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> {
     @Override
     public ImageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_holder, parent, false);
-        ImageHolder imageViewHolder = new ImageHolder(parent);
+        ImageHolder imageViewHolder = new ImageHolder(view);
         mContext = parent.getContext();
         return imageViewHolder;
     }
 
     @Override
     public void onBindViewHolder(ImageHolder holder, int position) {
-        holder.infoTitle.setText(images.get(position).getTitle());
-        holder.infoViews.setText(images.get(position).getViews());
+        holder.infoTitle.setText(images.get(position).getTitle().toString());
+        holder.infoViews.setText(images.get(position).getViews().toString());
         Picasso.with(mContext)
                 .load(images.get(position).getLink())
                 .fit()
