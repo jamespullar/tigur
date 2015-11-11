@@ -1,11 +1,15 @@
 package me.pullar.tigur.api.model;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by jamespullar on 11/3/15.
  */
-public class Image {
+public class Image implements Parcelable {
 
     @SerializedName("id")
     private String id;
@@ -150,4 +154,37 @@ public class Image {
         this.webm = webm;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        Bundle bundle = new Bundle();
+
+        bundle.putString("Link", link);
+        bundle.putString("Title", title);
+        bundle.putInt("Views", views);
+
+        dest.writeBundle(bundle);
+    }
+
+    public static final Parcelable.Creator<Image> CREATOR = new Creator<Image>() {
+
+        @Override
+        public Image createFromParcel(Parcel source) {
+            // read the bundle containing key value pairs from the parcel
+            Bundle bundle = source.readBundle();
+
+            // instantiate a person using values from the bundle
+            return new Image();
+        }
+
+        @Override
+        public Image[] newArray(int size) {
+            return new Image[size];
+        }
+
+    };
 }

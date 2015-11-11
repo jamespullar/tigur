@@ -1,6 +1,8 @@
 package me.pullar.tigur.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
@@ -10,11 +12,14 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-import me.pullar.tigur.ui.adapter.ImageAdapter;
+import java.util.List;
+
 import me.pullar.tigur.R;
 import me.pullar.tigur.api.ImgurApi;
 import me.pullar.tigur.api.RestClient;
+import me.pullar.tigur.api.model.Image;
 import me.pullar.tigur.api.model.Images;
+import me.pullar.tigur.ui.adapter.ImageAdapter;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -39,35 +44,49 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
 
+    private static Context mContext;
+    private static View mScreen;
+
     private ImgurApi imgurApi;
     private Call<Images> getImages;
 
-    private View mScreen;
     private boolean mVisible;
+    private ImageAdapter mImageAdapter;
+    private List<Image> mImageList;
     private RecyclerView mRvImageContent;
+    private LinearLayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getApplicationContext();
         setContentView(R.layout.activity_main);
         mScreen = findViewById(android.R.id.content);
         mRvImageContent = (RecyclerView) findViewById(R.id.rv_image_content);
 
-        loadImages();
-    }
-
-    private void loadImages(){
         imgurApi = RestClient.getClient();
         getImages = imgurApi.getImages();
 
+        loadImages();
+    }
+
+    public static Context getContext() {
+        return mContext;
+    }
+
+    private void loadImages(){
         getImages.enqueue(new Callback<Images>() {
             @Override
             public void onResponse(Response<Images> response, Retrofit retrofit) {
                 Log.d("MainActivity", "Response Code = " + response.code());
                 Log.d("MainActivity", "Response Body = " + response.body().getImages());
                 if (response.isSuccess()) {
-                    mRvImageContent.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
-                    mRvImageContent.setAdapter(new ImageAdapter(response.body()));
+                    mImageAdapter = new ImageAdapter(response.body());
+                    mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mLayoutManager.setOrientation(getOrientation());
+                    mLayoutManager.setReverseLayout(false);
+                    mRvImageContent.setLayoutManager(mLayoutManager);
+                    mRvImageContent.setAdapter(mImageAdapter);
                 }
             }
 
@@ -156,4 +175,34 @@ public class MainActivity extends AppCompatActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+    private int getOrientation() {
+        int orientation = 0;
+
+        // Gets orientation from resources
+        // Vertical = 1
+        // Horizontal = 2
+
+        orientation = getResources().getConfiguration().orientation;
+
+        // Returns orientation for LinearLayoutManager
+        // Horizontal = 0
+        // Vertical = 1
+
+        if (orientation == 1) {
+            return orientation;
+        } else if (orientation == 2) {
+            return 0;
+        }
+        return orientation;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+        mLayoutManager.setOrientation(getOrientation());
+        mRvImageContent.setLayoutManager(mLayoutManager);
+        mRvImageContent.setAdapter(mImageAdapter);
+    }
+
 }

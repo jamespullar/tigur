@@ -12,6 +12,10 @@ public class Images {
     @SerializedName("data")
     private List<Image> images;
 
+    public Images(List<Image> imageList) {
+        this.images = imageList;
+    }
+
     public List<Image> getImages() {
         return images;
     }
