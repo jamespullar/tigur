@@ -44,7 +44,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements P
     }
 
     @Override
-    public void onBindViewHolder(ImageHolder holder, int position) {
+    public void onBindViewHolder(final ImageHolder holder, int position) {
         holder.infoTitle.setText(images.get(position).getTitle().toString());
         holder.infoViews.setText("Views: " + images.get(position).getViews().toString());
 
@@ -57,7 +57,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements P
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Log.d("ImageHolder", "Clicked image " + holder.infoTitle);
+                Snackbar.make(v, R.string.on_click, Snackbar.LENGTH_LONG).show();
             }
         });
     }
