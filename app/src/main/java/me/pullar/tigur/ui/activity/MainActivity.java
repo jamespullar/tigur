@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
      * and a change of the status and navigation bar.
      */
     private static final int UI_ANIMATION_DELAY = 300;
+    private static final String LIST_STATE_KEY = "image_list_key";
 
     private static Context mContext;
     private static View mScreen;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Image> mImageList;
     private RecyclerView mRvImageContent;
     private LinearLayoutManager mLayoutManager;
+    private Parcelable mListState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
         super.onConfigurationChanged(config);
         mLayoutManager.setOrientation(getOrientation());
         mRvImageContent.setLayoutManager(mLayoutManager);
-        mRvImageContent.setAdapter(mImageAdapter);
     }
 
 }

@@ -35,6 +35,22 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements P
         this.images = images.getImages();
     }
 
+    protected ImageAdapter(Parcel in) {
+        images = in.createTypedArrayList(Image.CREATOR);
+    }
+
+    public static final Creator<ImageAdapter> CREATOR = new Creator<ImageAdapter>() {
+        @Override
+        public ImageAdapter createFromParcel(Parcel in) {
+            return new ImageAdapter(in);
+        }
+
+        @Override
+        public ImageAdapter[] newArray(int size) {
+            return new ImageAdapter[size];
+        }
+    };
+
     @Override
     public ImageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_holder, parent, false);
@@ -79,6 +95,5 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements P
 
         bundle.putParcelableArrayList("ListImage", (ArrayList<? extends Parcelable>) images);
     }
-
 
 }
