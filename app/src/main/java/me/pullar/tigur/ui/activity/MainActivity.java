@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -31,7 +32,9 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class MainActivity extends AppCompatActivity {
+import static me.pullar.tigur.ui.adapter.ImageAdapter.*;
+
+public class MainActivity extends AppCompatActivity implements ImageFragment.OnFragmentInteractionListener {
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -78,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         getImages = imgurApi.getImages();
 
         mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
-
         mGridLayoutManager = new GridLayoutManager(getApplicationContext(), 2, GridLayoutManager.VERTICAL, false);
 
         loadImages();
@@ -101,6 +103,15 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccess()) {
                     mImageAdapter = new ImageAdapter(response.body());
                     chooseLayoutManager();
+                    mImageAdapter.setOnItemClickListener(new OnItemClickListener() {
+                        @Override
+                        public void onItemClick() {
+                            ImageFragment imageFragment = ImageFragment.newInstance("this", "that");
+                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                            ft.replace(android.R.id.content, imageFragment).commit();
+                        }
+                    });
+
                     mRvImageContent.setAdapter(mImageAdapter);
                 }
             }
@@ -238,4 +249,7 @@ public class MainActivity extends AppCompatActivity {
         chooseLayoutManager();
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+    }
 }
