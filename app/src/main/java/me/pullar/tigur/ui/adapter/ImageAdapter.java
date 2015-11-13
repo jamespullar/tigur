@@ -10,18 +10,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import me.pullar.tigur.ui.activity.MainActivity;
-import me.pullar.tigur.ui.fragment.ImageHolder;
 import me.pullar.tigur.R;
 import me.pullar.tigur.api.model.Image;
 import me.pullar.tigur.api.model.Images;
+import me.pullar.tigur.ui.fragment.ImageHolder;
 
 /**
  * Created by jamespullar on 11/8/15.
@@ -64,10 +62,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements P
         holder.infoTitle.setText(images.get(position).getTitle().toString());
         holder.infoViews.setText("Views: " + images.get(position).getViews().toString());
 
-        Picasso.with(mContext)
+        Glide.with(mContext)
                 .load(images.get(position).getLink())
-                .fit()
-                .centerInside()
+                .centerCrop()
                 .into(holder.image);
 
         holder.image.setOnClickListener(new View.OnClickListener() {

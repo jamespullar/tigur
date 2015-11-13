@@ -1,6 +1,9 @@
 package me.pullar.tigur.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -8,6 +11,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,6 +25,7 @@ import me.pullar.tigur.api.RestClient;
 import me.pullar.tigur.api.model.Image;
 import me.pullar.tigur.api.model.Images;
 import me.pullar.tigur.ui.adapter.ImageAdapter;
+import me.pullar.tigur.ui.fragment.ImageFragment;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -56,8 +61,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageAdapter mImageAdapter;
     private List<Image> mImageList;
     private RecyclerView mRvImageContent;
-    private LinearLayoutManager mLayoutManager;
+    private LinearLayoutManager mLinearLayoutManager;
     private Parcelable mListState;
+    private static FragmentManager mFragmentManager;
+    private GridLayoutManager mGridLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,11 +77,19 @@ public class MainActivity extends AppCompatActivity {
         imgurApi = RestClient.getClient();
         getImages = imgurApi.getImages();
 
+        mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+
+        mGridLayoutManager = new GridLayoutManager(getApplicationContext(), 2, GridLayoutManager.VERTICAL, false);
+
         loadImages();
     }
 
     public static Context getContext() {
         return mContext;
+    }
+
+    public static FragmentManager getmFragmentManager() {
+        return mFragmentManager;
     }
 
     private void loadImages(){
@@ -85,10 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MainActivity", "Response Body = " + response.body().getImages());
                 if (response.isSuccess()) {
                     mImageAdapter = new ImageAdapter(response.body());
-                    mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                    mLayoutManager.setOrientation(getOrientation());
-                    mLayoutManager.setReverseLayout(false);
-                    mRvImageContent.setLayoutManager(mLayoutManager);
+                    chooseLayoutManager();
                     mRvImageContent.setAdapter(mImageAdapter);
                 }
             }
@@ -98,6 +110,36 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MainActivity", t.getMessage());
             }
         });
+    }
+
+    public void displayImage() {
+        Fragment imageFragment = new ImageFragment();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.add(R.id.fullscreen_image, imageFragment).commit();
+    }
+
+    @Override
+    public FragmentManager getFragmentManager() {
+        mFragmentManager = super.getFragmentManager();
+        return super.getFragmentManager();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+
+        mListState = mRvImageContent.getLayoutManager().onSaveInstanceState();
+        state.putParcelable(LIST_STATE_KEY, mListState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle state) {
+        super.onRestoreInstanceState(state);
+
+        mListState = state.getParcelable(LIST_STATE_KEY);
+        if (mListState != null) {
+            mRvImageContent.getLayoutManager().onRestoreInstanceState(mListState);
+        }
     }
 
     @Override
@@ -179,32 +221,21 @@ public class MainActivity extends AppCompatActivity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
-    private int getOrientation() {
-        int orientation = 0;
+    private void chooseLayoutManager() {
+        int orientation = getResources().getConfiguration().orientation;
 
-        // Gets orientation from resources
-        // Vertical = 1
-        // Horizontal = 2
-
-        orientation = getResources().getConfiguration().orientation;
-
-        // Returns orientation for LinearLayoutManager
-        // Horizontal = 0
-        // Vertical = 1
-
+        // Gets orientation from resources. Vertical = 1, Horizontal = 2
         if (orientation == 1) {
-            return orientation;
+            mRvImageContent.setLayoutManager(mLinearLayoutManager);
         } else if (orientation == 2) {
-            return 0;
+            mRvImageContent.setLayoutManager(mGridLayoutManager);
         }
-        return orientation;
     }
 
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-        mLayoutManager.setOrientation(getOrientation());
-        mRvImageContent.setLayoutManager(mLayoutManager);
+        chooseLayoutManager();
     }
 
 }
