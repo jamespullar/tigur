@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
         mRvImageContent = (RecyclerView) findViewById(R.id.rv_image_content);
 
         imgurApi = RestClient.getClient();
-//        getImages = imgurApi.getImages();
 
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
 
@@ -192,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
         } else {
             getFragmentManager().popBackStack();
         }
+        mImageFragmentVisible = !mImageFragmentVisible;
     }
 
 }
