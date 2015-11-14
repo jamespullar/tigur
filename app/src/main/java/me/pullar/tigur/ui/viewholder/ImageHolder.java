@@ -1,4 +1,4 @@
-package me.pullar.tigur.ui.fragment;
+package me.pullar.tigur.ui.viewholder;
 
 import android.app.FragmentTransaction;
 import android.content.Context;

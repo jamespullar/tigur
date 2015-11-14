@@ -8,16 +8,14 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 
-import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import me.pullar.tigur.R;
 import me.pullar.tigur.api.model.Image;
 import me.pullar.tigur.api.model.Images;
-import me.pullar.tigur.ui.fragment.ImageHolder;
+import me.pullar.tigur.ui.viewholder.ImageHolder;
 
 /**
  * Created by jamespullar on 11/8/15.

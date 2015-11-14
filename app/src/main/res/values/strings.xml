@@ -18,4 +18,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="menu_choose_subreddit">Choose subreddit</string>
     <string name="menu_about">About</string>
+    <string name="dialog_confirm">View Subreddit Images</string>
+    <string name="dialog_cancel">Cancel</string>
 </resources>

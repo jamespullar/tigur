@@ -1,6 +1,7 @@
 package me.pullar.tigur.ui.activity;
 
 import android.app.ActionBar;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -22,6 +24,7 @@ import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -32,6 +35,7 @@ import me.pullar.tigur.api.model.Image;
 import me.pullar.tigur.api.model.Images;
 import me.pullar.tigur.ui.adapter.ImageAdapter;
 import me.pullar.tigur.ui.fragment.ImageFragment;
+import me.pullar.tigur.ui.fragment.SubredditDialogFragment;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity
     private SwipeRefreshLayout swipeRefresh;
     private android.support.v7.app.ActionBar mActionBar;
     private float mActionBarHeight;
+    private boolean mSubredditDialogVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +91,7 @@ public class MainActivity extends AppCompatActivity
         mGridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
 
         mImageFragmentVisible = false;
+        mSubredditDialogVisible = false;
 
         loadImages();
 
@@ -224,7 +230,23 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_choose_subreddit:
+                Snackbar.make(findViewById(android.R.id.content), R.string.on_click, Snackbar.LENGTH_LONG).show();
+                showSubredditDialog();
+            case R.id.menu_about:
+                Snackbar.make(findViewById(android.R.id.content), R.string.on_click, Snackbar.LENGTH_LONG).show();
+        }
         return true;
+    }
+
+    private void showSubredditDialog() {
+        if (!mSubredditDialogVisible) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.replace(android.R.id.content, new SubredditDialogFragment(), null);
+            ft.commit();
+        }
+        mSubredditDialogVisible = !mSubredditDialogVisible;
     }
 
     @Override
@@ -236,4 +258,5 @@ public class MainActivity extends AppCompatActivity
             mActionBar.show();
         }
     }
+
 }
