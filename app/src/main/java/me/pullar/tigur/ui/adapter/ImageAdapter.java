@@ -66,6 +66,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements V
                 .asBitmap()
                 .centerCrop()
                 .placeholder(R.drawable.loading)
+                .error(R.drawable.error)
                 .into(holder.image);
     }
 
