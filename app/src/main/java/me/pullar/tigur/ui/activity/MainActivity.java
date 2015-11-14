@@ -17,6 +17,7 @@ import android.view.View;
 
 import java.util.List;
 
+import butterknife.Bind;
 import me.pullar.tigur.R;
 import me.pullar.tigur.api.ImgurApi;
 import me.pullar.tigur.api.RestClient;
@@ -35,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
     private static final String LIST_STATE_KEY = "image_list_key";
 
     private static Context mContext;
-    private static View mScreen;
 
     private ImgurApi imgurApi;
     private Call<Images> getImages;
@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
 
         mContext = getApplicationContext();
         setContentView(R.layout.activity_main);
-        mScreen = findViewById(android.R.id.content);
         mRvImageContent = (RecyclerView) findViewById(R.id.rv_image_content);
 
         imgurApi = RestClient.getClient();
@@ -155,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
     protected void onResume() {
         super.onResume();
     }
-    
+
     private void chooseLayoutManager() {
         int orientation = getResources().getConfiguration().orientation;
 

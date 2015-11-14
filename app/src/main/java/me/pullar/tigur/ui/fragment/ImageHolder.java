@@ -23,6 +23,8 @@ public class ImageHolder extends RecyclerView.ViewHolder implements View.OnClick
     public ImageView image;
     public TextView infoTitle;
     public TextView infoViews;
+    public TextView infoDateTime;
+    public TextView infoSection;
     private ImageAdapter.OnItemClickListener mOnItemClickListener;
     public TextView infoDescription;
     public View infoLine;
@@ -40,6 +42,8 @@ public class ImageHolder extends RecyclerView.ViewHolder implements View.OnClick
         infoTitle = (TextView) view.findViewById(R.id.image_info_title);
         infoViews = (TextView) view.findViewById(R.id.image_info_views);
         infoDescription = (TextView) view.findViewById(R.id.image_info_description);
+        infoDateTime = (TextView) view.findViewById(R.id.image_info_datetime);
+        infoSection = (TextView) view.findViewById(R.id.image_info_section);
         infoLine = view.findViewById(R.id.image_info_line);
 
         image.setOnClickListener(new View.OnClickListener() {

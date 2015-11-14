@@ -23,6 +23,9 @@ public class Image implements Parcelable {
     @SerializedName("description")
     private String description;
 
+    @SerializedName("datetime")
+    private Integer datetime;
+
     @SerializedName("link")
     private String link;
 
@@ -49,6 +52,9 @@ public class Image implements Parcelable {
 
     @SerializedName("webm")
     private String webm;
+
+    @SerializedName("section")
+    private String section;
 
     public String getId() {
         return id;
@@ -80,6 +86,14 @@ public class Image implements Parcelable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(Integer datetime) {
+        this.datetime = datetime;
     }
 
     public String getLink() {
@@ -152,6 +166,14 @@ public class Image implements Parcelable {
 
     public void setWebm(String webm) {
         this.webm = webm;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
     }
 
     @Override

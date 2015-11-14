@@ -2,18 +2,15 @@ package me.pullar.tigur.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 
 import me.pullar.tigur.R;
 import me.pullar.tigur.api.model.Image;
@@ -46,8 +43,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements V
         Image currentImage = images.get(position);
 
         holder.infoTitle.setText(currentImage.getTitle().toString());
-
         holder.infoViews.setText("Views: " + NumberFormat.getNumberInstance().format(currentImage.getViews()).toString());
+        holder.infoDateTime.setText(DateFormat.getDateInstance().format(currentImage.getDatetime()));
+        holder.infoSection.setText(currentImage.getSection().toString());
 
         if (currentImage.getDescription() != null) {
             holder.infoDescription.setText(currentImage.getDescription().toString());
