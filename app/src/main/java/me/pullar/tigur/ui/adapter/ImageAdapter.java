@@ -11,7 +11,9 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import me.pullar.tigur.R;
 import me.pullar.tigur.api.model.Image;
@@ -45,7 +47,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements V
 
         holder.infoTitle.setText(currentImage.getTitle().toString());
 
-        holder.infoViews.setText("Views: " + currentImage.getViews().toString());
+        holder.infoViews.setText("Views: " + NumberFormat.getNumberInstance().format(currentImage.getViews()).toString());
 
         if (currentImage.getDescription() != null) {
             holder.infoDescription.setText(currentImage.getDescription().toString());

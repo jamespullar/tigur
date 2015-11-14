@@ -1,15 +1,13 @@
 package me.pullar.tigur.ui.activity;
 
-import android.annotation.SuppressLint;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,8 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
-
-import com.bumptech.glide.Glide;
+import android.view.WindowManager;
 
 import java.util.List;
 
@@ -76,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mContext = getApplicationContext();
         setContentView(R.layout.activity_main);
         mScreen = findViewById(android.R.id.content);

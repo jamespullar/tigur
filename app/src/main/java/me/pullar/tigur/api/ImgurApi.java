@@ -11,7 +11,7 @@ import retrofit.http.Headers;
 public interface ImgurApi {
 
     @Headers({"Authorization: Client-ID 0d3b867e5a368c2"})
-    @GET("gallery/r/pics")
+    @GET("gallery/r/food")
     Call<Images> getImages();
 
 }
