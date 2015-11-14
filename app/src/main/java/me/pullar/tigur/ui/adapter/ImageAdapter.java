@@ -10,6 +10,8 @@ import com.bumptech.glide.Glide;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import me.pullar.tigur.R;
@@ -44,7 +46,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements V
 
         holder.infoTitle.setText(currentImage.getTitle().toString());
         holder.infoViews.setText("Views: " + NumberFormat.getNumberInstance().format(currentImage.getViews()).toString());
-        holder.infoDateTime.setText(DateFormat.getDateInstance().format(currentImage.getDatetime()));
+
+        Long time = Long.valueOf(currentImage.getDatetime()/1000);
+        holder.infoDateTime.setText(time.toString());
         holder.infoSection.setText(currentImage.getSection().toString());
 
         if (currentImage.getDescription() != null) {

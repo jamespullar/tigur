@@ -7,17 +7,16 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
-import android.view.View;
 
 import java.util.List;
 
-import butterknife.Bind;
 import me.pullar.tigur.R;
 import me.pullar.tigur.api.ImgurApi;
 import me.pullar.tigur.api.RestClient;
@@ -50,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
     private StaggeredGridLayoutManager mGridLayoutManager;
     private boolean mImageFragmentVisible;
     private ImageFragment imageFragment;
+    private SwipeRefreshLayout swipeRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,9 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
         mRvImageContent = (RecyclerView) findViewById(R.id.rv_image_content);
 
         imgurApi = RestClient.getClient();
-        getImages = imgurApi.getImages();
+//        getImages = imgurApi.getImages();
+
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
 
         mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         mGridLayoutManager = new StaggeredGridLayoutManager(2, GridLayoutManager.VERTICAL);
@@ -69,6 +71,16 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
         mImageFragmentVisible = false;
 
         loadImages();
+
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getImages.cancel();
+                getImages = imgurApi.getImages();
+                loadImages();
+                swipeRefresh.setRefreshing(false);
+            }
+        });
     }
 
     public static Context getContext() {
@@ -80,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
     }
 
     private void loadImages(){
+        getImages = imgurApi.getImages();
         getImages.enqueue(new Callback<Images>() {
             @Override
             public void onResponse(Response<Images> response, Retrofit retrofit) {
@@ -95,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
                             toggleImageFragment();
                         }
                     });
-
                     mRvImageContent.setAdapter(mImageAdapter);
                 }
             }
