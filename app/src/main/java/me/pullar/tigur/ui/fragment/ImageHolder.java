@@ -24,6 +24,8 @@ public class ImageHolder extends RecyclerView.ViewHolder implements View.OnClick
     public TextView infoTitle;
     public TextView infoViews;
     private ImageAdapter.OnItemClickListener mOnItemClickListener;
+    public TextView infoDescription;
+    public View infoLine;
 
     public ImageHolder(View view) {
         super(view);
@@ -37,6 +39,8 @@ public class ImageHolder extends RecyclerView.ViewHolder implements View.OnClick
         image = (ImageView) view.findViewById(R.id.image);
         infoTitle = (TextView) view.findViewById(R.id.image_info_title);
         infoViews = (TextView) view.findViewById(R.id.image_info_views);
+        infoDescription = (TextView) view.findViewById(R.id.image_info_description);
+        infoLine = view.findViewById(R.id.image_info_line);
 
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +50,7 @@ public class ImageHolder extends RecyclerView.ViewHolder implements View.OnClick
                 }
             }
         });
+
     }
 
     @Override
@@ -53,7 +58,7 @@ public class ImageHolder extends RecyclerView.ViewHolder implements View.OnClick
     }
 
     public void setOnItemClickListener(ImageAdapter.OnItemClickListener listener) {
-        this.mOnItemClickListener = (ImageAdapter.OnItemClickListener) listener;
+        this.mOnItemClickListener = listener;
     }
 
 }

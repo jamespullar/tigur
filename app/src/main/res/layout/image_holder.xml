@@ -6,7 +6,7 @@
     android:orientation="vertical"
     card_view:cardCornerRadius="2dp"
     card_view:cardElevation="5dp"
-    android:layout_margin="3dp"
+    android:layout_margin="5dp"
     card_view:cardBackgroundColor="@color/cardview_dark_background"
     android:focusable="true">
     <RelativeLayout
@@ -15,19 +15,29 @@
         android:layout_marginBottom="5dp" android:layout_marginTop="5dp">
         <RelativeLayout android:id="@+id/image_info_overlay"
             android:layout_alignParentTop="true"
-            android:layout_width="match_parent" android:layout_height="wrap_content">
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp" android:layout_marginRight="5dp">
             <TextView android:id="@+id/image_info_title"
                 android:layout_width="match_parent" android:layout_height="match_parent"
-                android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
                 android:layout_alignParentLeft="true" android:textSize="@dimen/abc_text_size_subhead_material"
                 android:textColor="@android:color/secondary_text_dark" />
+            <View android:id="@+id/image_info_line"
+                android:layout_width="match_parent" android:layout_height="1px"
+                android:layout_below="@id/image_info_title"
+                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
+                android:background="#808080"/>
+            <TextView android:id="@+id/image_info_description"
+                android:layout_below="@id/image_info_line"
+                android:layout_width="wrap_content" android:layout_height="match_parent"
+                android:textColor="@android:color/tertiary_text_dark"
+                android:autoLink="web"/>
         </RelativeLayout>
         <RelativeLayout android:id="@+id/image_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/image_info_overlay">
             <pl.droidsonroids.gif.GifImageView android:id="@+id/image"
-                android:layout_width="400dp" android:layout_height="200dp"
+                android:layout_width="match_parent" android:layout_height="200dp"
                 android:layout_centerInParent="true"
                 android:layout_marginBottom="5dp" android:layout_marginTop="5dp"/>
         </RelativeLayout>

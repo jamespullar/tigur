@@ -2,6 +2,8 @@ package me.pullar.tigur.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +23,6 @@ import me.pullar.tigur.ui.fragment.ImageHolder;
  */
 public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements View.OnClickListener {
 
-    private ImageView imageView;
     Context mContext;
     List<Image> images;
     private OnItemClickListener mOnItemClickListener;
@@ -40,16 +41,28 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements V
 
     @Override
     public void onBindViewHolder(final ImageHolder holder, int position) {
-        holder.infoTitle.setText(images.get(position).getTitle().toString());
-        holder.infoViews.setText("Views: " + images.get(position).getViews().toString());
+        Image currentImage = images.get(position);
+
+        holder.infoTitle.setText(currentImage.getTitle().toString());
+
+        holder.infoViews.setText("Views: " + currentImage.getViews().toString());
+
+        if (currentImage.getDescription() != null) {
+            holder.infoDescription.setText(currentImage.getDescription().toString());
+            holder.infoDescription.setVisibility(View.VISIBLE);
+            holder.infoLine.setVisibility(View.VISIBLE);
+        } else {
+            holder.infoDescription.setText("");
+            holder.infoDescription.setVisibility(View.GONE);
+            holder.infoLine.setVisibility(View.GONE);
+        }
 
         Glide.with(mContext)
-                .load(images.get(position).getLink())
+                .load(currentImage.getLink())
                 .asBitmap()
                 .centerCrop()
+                .placeholder(R.drawable.loading)
                 .into(holder.image);
-
-//        holder.image.setOnClickListener(mOnItemClickListener);
     }
 
     @Override
