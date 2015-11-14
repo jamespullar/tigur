@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
                         @Override
                         public void onItemClick() {
                             imageFragment = ImageFragment.newInstance("this");
-                            toggleImageFragment();
+                            showImageFragment();
                         }
                     });
                     mRvImageContent.setAdapter(mImageAdapter);
@@ -119,18 +119,13 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
         });
     }
 
-    private void toggleImageFragment() {
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-        if (mImageFragmentVisible) {
-            ft.remove(imageFragment);
-        } else {
+    private void showImageFragment() {
+        if (!mImageFragmentVisible) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(android.R.id.content, imageFragment).addToBackStack(null);
+            ft.commit();
         }
-        ft.commit();
         mImageFragmentVisible = !mImageFragmentVisible;
-
     }
 
     @Override
