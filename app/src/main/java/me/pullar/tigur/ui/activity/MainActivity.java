@@ -1,9 +1,11 @@
 package me.pullar.tigur.ui.activity;
 
+import android.app.ActionBar;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -17,6 +19,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.widget.ScrollView;
 
 import java.util.List;
 
@@ -34,7 +39,8 @@ import retrofit.Retrofit;
 
 import static me.pullar.tigur.ui.adapter.ImageAdapter.OnItemClickListener;
 
-public class MainActivity extends AppCompatActivity implements ImageFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity
+        implements ImageFragment.OnFragmentInteractionListener, ViewTreeObserver.OnScrollChangedListener {
     private static final String LIST_STATE_KEY = "image_list_key";
 
     private static Context mContext;
@@ -53,14 +59,23 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
     private boolean mImageFragmentVisible;
     private ImageFragment imageFragment;
     private SwipeRefreshLayout swipeRefresh;
+    private android.support.v7.app.ActionBar mActionBar;
+    private float mActionBarHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         super.onCreate(savedInstanceState);
-
         mContext = getApplicationContext();
         setContentView(R.layout.activity_main);
+
+        mActionBar = getSupportActionBar();
         mRvImageContent = (RecyclerView) findViewById(R.id.rv_image_content);
+
+        final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
+                new int[] { android.R.attr.actionBarSize });
+        mActionBarHeight = styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
 
         imgurApi = RestClient.getClient();
 
@@ -83,6 +98,9 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
                 swipeRefresh.setRefreshing(false);
             }
         });
+
+        mRvImageContent.getViewTreeObserver().addOnScrollChangedListener(this);
+
     }
 
     public static Context getContext() {
@@ -209,4 +227,13 @@ public class MainActivity extends AppCompatActivity implements ImageFragment.OnF
         return true;
     }
 
+    @Override
+    public void onScrollChanged() {
+        float y = mRvImageContent.getScrollY();
+        if (y >= mActionBarHeight && mActionBar.isShowing()) {
+            mActionBar.hide();
+        } else if ( y==0 && !mActionBar.isShowing()) {
+            mActionBar.show();
+        }
+    }
 }
