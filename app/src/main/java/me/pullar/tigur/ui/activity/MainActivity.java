@@ -16,6 +16,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import java.util.List;
 
