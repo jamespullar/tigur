@@ -42,7 +42,6 @@ public class ImageHolder extends RecyclerView.ViewHolder implements View.OnClick
         infoTitle = (TextView) view.findViewById(R.id.image_info_title);
         infoViews = (TextView) view.findViewById(R.id.image_info_views);
         infoDescription = (TextView) view.findViewById(R.id.image_info_description);
-        infoDateTime = (TextView) view.findViewById(R.id.image_info_datetime);
         infoSection = (TextView) view.findViewById(R.id.image_info_section);
         infoLine = view.findViewById(R.id.image_info_line);
 

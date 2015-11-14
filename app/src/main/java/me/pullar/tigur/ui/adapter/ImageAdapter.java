@@ -44,9 +44,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements V
 
         holder.infoTitle.setText(currentImage.getTitle().toString());
         holder.infoViews.setText("Views: " + NumberFormat.getNumberInstance().format(currentImage.getViews()).toString());
-
-        Date date = new Date(currentImage.getDatetime());
-        holder.infoDateTime.setText(date.toString());
         holder.infoSection.setText(currentImage.getSection().toString());
 
         if (currentImage.getDescription() != null) {

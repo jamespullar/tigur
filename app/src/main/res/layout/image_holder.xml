@@ -47,17 +47,12 @@
             android:layout_width="match_parent" android:layout_height="match_parent">
             <TextView android:id="@+id/image_info_views"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:gravity="left"
-                android:textSize="@dimen/abc_text_size_caption_material"
-                android:textColor="@android:color/tertiary_text_dark" />
-            <TextView android:id="@+id/image_info_datetime"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:gravity="right"
-                android:textSize="12sp"
+                android:textSize="@dimen/abc_text_size_caption_material"
                 android:textColor="@android:color/tertiary_text_dark" />
             <TextView android:id="@+id/image_info_section"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_below="@id/image_info_datetime"
+                android:gravity="left"
                 android:textSize="12sp"
                 android:textColor="@android:color/tertiary_text_dark" />
         </RelativeLayout>
