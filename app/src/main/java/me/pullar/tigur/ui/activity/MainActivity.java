@@ -11,20 +11,23 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-
-import com.bumptech.glide.Glide;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.support.v7.internal.view.menu.ActionMenuItemView;
+import android.widget.ImageView;
 
 import java.util.List;
 
@@ -41,11 +44,8 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-import static me.pullar.tigur.ui.adapter.ImageAdapter.OnItemClickListener;
-
 public class MainActivity extends AppCompatActivity
         implements ImageFragment.OnFragmentInteractionListener, ViewTreeObserver.OnScrollChangedListener {
-    private static final String LIST_STATE_KEY = "image_list_key";
     private static final String BUNDLE_RECYCLER_LAYOUT = "MainActivity.recycler.layout";
 
     private static Context mContext;
@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity
     private List<Image> mImageList;
     private RecyclerView mRvImageContent;
     private LinearLayoutManager mLinearLayoutManager;
-    private Parcelable mListState;
     private static FragmentManager mFragmentManager;
     private StaggeredGridLayoutManager mGridLayoutManager;
     private boolean mImageFragmentVisible;
@@ -67,42 +66,39 @@ public class MainActivity extends AppCompatActivity
     private Toolbar mToolBar;
     private float mActionBarHeight;
     private boolean mSubredditDialogVisible;
+    private ImageView mRefreshIcon;
+    private Menu mMenu;
+    private MenuItem mMenuRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        mImageFragmentVisible = false;
+        mSubredditDialogVisible = false;
+
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         super.onCreate(savedInstanceState);
         mContext = getApplicationContext();
         setContentView(R.layout.activity_main);
-
         mToolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
 
         mRvImageContent = (RecyclerView) findViewById(R.id.rv_image_content);
-
-        final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
-                new int[] { android.R.attr.actionBarSize });
-        mActionBarHeight = styledAttributes.getDimension(0, 0);
-        styledAttributes.recycle();
-
-        imgurApi = RestClient.getClient();
-
+        mRefreshIcon = (ImageView) findViewById(R.id.action_refresh);
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
 
         mLinearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         mGridLayoutManager = new StaggeredGridLayoutManager(2, GridLayoutManager.VERTICAL);
         mGridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
 
+        imgurApi = RestClient.getClient();
         if(savedInstanceState != null)
         {
             Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
             mRvImageContent.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+        } else {
+            loadImages();
         }
-        
-        mImageFragmentVisible = false;
-        mSubredditDialogVisible = false;
-
-        loadImages();
 
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -134,7 +130,7 @@ public class MainActivity extends AppCompatActivity
         return mFragmentManager;
     }
 
-    private void loadImages(){
+    private void loadImages() {
         getImages = imgurApi.getImages();
         getImages.enqueue(new Callback<Images>() {
             @Override
@@ -143,8 +139,23 @@ public class MainActivity extends AppCompatActivity
                 Log.d("MainActivity", "Response Body = " + response.body().getImages());
                 if (response.isSuccess()) {
                     mImageAdapter = new ImageAdapter(response.body());
-                    chooseLayoutManager();
+                    mRvImageContent.setLayoutManager(chooseLayoutManager());
                     mRvImageContent.setAdapter(mImageAdapter);
+
+                    // Get our refresh item from the menu
+                    mMenuRefresh = mMenu.findItem(R.id.action_refresh);
+                    if (mMenuRefresh.getActionView() != null) {
+                        // Remove the animation.
+                        mMenuRefresh.getActionView().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mMenuRefresh.getActionView().clearAnimation();
+                                mMenuRefresh.setActionView(null);
+                            }
+                        }, R.integer.anim_refresh_duration);
+                    }
+
+                    // Reset swipe refresh state
                     swipeRefresh.setRefreshing(false);
                 }
             }
@@ -159,16 +170,8 @@ public class MainActivity extends AppCompatActivity
     private void refreshImages() {
         getImages.cancel();
         getImages = imgurApi.getImages();
-        loadImages();
-    }
 
-    private void showImageFragment() {
-        if (!mImageFragmentVisible) {
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(android.R.id.content, imageFragment).addToBackStack(null);
-            ft.commit();
-        }
-        mImageFragmentVisible = !mImageFragmentVisible;
+        loadImages();
     }
 
     @Override
@@ -188,21 +191,24 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
     }
 
-    private void chooseLayoutManager() {
+    private RecyclerView.LayoutManager chooseLayoutManager() {
         int orientation = getResources().getConfiguration().orientation;
 
         // Gets orientation from resources. Vertical = 1, Horizontal = 2
         if (orientation == 1) {
-            mRvImageContent.setLayoutManager(mLinearLayoutManager);
+//            mRvImageContent.setLayoutManager(mLinearLayoutManager);
+            return mLinearLayoutManager;
         } else if (orientation == 2) {
-            mRvImageContent.setLayoutManager(mGridLayoutManager);
+//            mRvImageContent.setLayoutManager(mGridLayoutManager);
+            return mGridLayoutManager;
         }
+        return null;
     }
 
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-        chooseLayoutManager();
+        mRvImageContent.setLayoutManager(chooseLayoutManager());
     }
 
     @Override
@@ -230,6 +236,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.image_menu, menu);
+        mMenu = menu;
         return true;
     }
 
@@ -237,6 +244,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_refresh:
+                LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                ImageView iv = (ImageView)inflater.inflate(R.layout.iv_refresh, null);
+                Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
+                rotation.setRepeatCount(Animation.INFINITE);
+                iv.startAnimation(rotation);
+                item.setActionView(iv);
+                mRvImageContent.smoothScrollToPosition(0);
                 refreshImages();
                 break;
             case R.id.menu_choose_subreddit:
