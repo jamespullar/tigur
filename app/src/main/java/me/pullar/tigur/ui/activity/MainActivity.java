@@ -126,13 +126,13 @@ public class MainActivity extends AppCompatActivity
                 if (response.isSuccess()) {
                     mImageAdapter = new ImageAdapter(response.body());
                     chooseLayoutManager();
-                    mImageAdapter.setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick() {
-                            imageFragment = ImageFragment.newInstance("this");
-                            showImageFragment();
-                        }
-                    });
+//                    mImageAdapter.setOnItemClickListener(new OnItemClickListener() {
+//                        @Override
+//                        public void onItemClick() {
+//                            imageFragment = ImageFragment.newInstance(mImageList.get());
+//                            showImageFragment();
+//                        }
+//                    });
                     mRvImageContent.setAdapter(mImageAdapter);
                 }
             }
