@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import me.pullar.tigur.R;
 import me.pullar.tigur.ui.adapter.ImageAdapter;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by jamespullar on 11/8/15.

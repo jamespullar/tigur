@@ -1,6 +1,8 @@
 package me.pullar.tigur.ui.fragment;
 
 import android.app.Activity;
+import android.content.res.Configuration;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -8,11 +10,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 
 import me.pullar.tigur.R;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,12 +32,17 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String IMAGE_LINK = "image_link";
+    private static final String IS_ANIMATED = "is_animated";
 
     // TODO: Rename and change types of parameters
     private String mImageLink;
 
     private OnFragmentInteractionListener mListener;
     private ImageView mImageView;
+    private FrameLayout mScreen;
+    private Boolean mIsAnimated;
+    private WebView mAnimView;
+    private PhotoViewAttacher mAttacher;
 
     /**
      * Use this factory method to create a new instance of
@@ -45,6 +56,7 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         ImageFragment fragment = new ImageFragment();
         Bundle args = new Bundle();
         args.putString(IMAGE_LINK, imageLink);
+//        args.putBoolean(IS_ANIMATED, isAnimated);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,6 +70,7 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
+            mIsAnimated = getArguments().getBoolean(IS_ANIMATED);
             mImageLink = getArguments().getString(IMAGE_LINK);
         }
 
@@ -68,16 +81,26 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_image, container, false);
         mImageView = (ImageView) view.findViewById(R.id.fragment_image_fullscreen);
+        mScreen = (FrameLayout) view.findViewById(R.id.image_fragment);
 
-        Log.d("ImageFragment", "Image = " + mImageLink);
+        mAttacher = new PhotoViewAttacher(mImageView);
+        mAttacher.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
+            @Override
+            public void onPhotoTap(View view, float x, float y) {
+                getFragmentManager().popBackStack();
+            }
+        });
+        mAttacher.setOnMatrixChangeListener(new PhotoViewAttacher.OnMatrixChangedListener() {
+            @Override
+            public void onMatrixChanged(RectF rect) {
+//                mImageView.getLayoutParams().width = Math.round(rect.width());
+//                mImageView.getLayoutParams().height = Math.round(rect.height());
+//
+//                mImageView.setLayoutParams();
+            }
+        });
 
-        Glide.with(this)
-                .load(mImageLink)
-                .asBitmap()
-                .fitCenter()
-                .placeholder(R.drawable.loading)
-                .error(R.drawable.error)
-                .into(mImageView);
+        loadImage();
 
         // Inflate the layout for this fragment
         return view;
@@ -108,12 +131,33 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
+    private void loadImage() {
+
+        mScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStack();
+            }
+        });
+
+        Glide.with(this)
+                .load(mImageLink)
+                .crossFade(400)
+                .fitCenter()
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.error)
+                .into(mImageView);
+
+    }
+
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.image_fragment:
-                getFragmentManager().popBackStack();
-        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+        loadImage();
     }
 
     /**

@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,8 +78,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> implements V
             @Override
             public void onClick(View v) {
                 FragmentManager fm = mMainActivity.getFragmentManager();
+                ImageFragment imageFragment;
                 if (fm != null) {
-                    ImageFragment imageFragment = ImageFragment.newInstance(currentImage.getLink());
+                    if (currentImage.isAnimated()) {
+                        Log.d("ImageAdapter", "Image Link = " + currentImage.getLink());
+                        imageFragment = ImageFragment.newInstance(currentImage.getLink());
+
+                    } else {
+                        imageFragment = ImageFragment.newInstance(currentImage.getLink());
+                    }
                     FragmentTransaction ft = MainActivity.getmFragmentManager().beginTransaction();
                     ft.replace(android.R.id.content, imageFragment).addToBackStack(null);
                     ft.commit();

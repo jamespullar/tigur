@@ -97,9 +97,7 @@ public class MainActivity extends AppCompatActivity
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getImages.cancel();
-                getImages = imgurApi.getImages();
-                loadImages();
+                refreshImages();
                 swipeRefresh.setRefreshing(false);
             }
         });
@@ -126,13 +124,6 @@ public class MainActivity extends AppCompatActivity
                 if (response.isSuccess()) {
                     mImageAdapter = new ImageAdapter(response.body());
                     chooseLayoutManager();
-//                    mImageAdapter.setOnItemClickListener(new OnItemClickListener() {
-//                        @Override
-//                        public void onItemClick() {
-//                            imageFragment = ImageFragment.newInstance(mImageList.get());
-//                            showImageFragment();
-//                        }
-//                    });
                     mRvImageContent.setAdapter(mImageAdapter);
                 }
             }
@@ -142,6 +133,12 @@ public class MainActivity extends AppCompatActivity
                 Log.d("MainActivity", t.getMessage());
             }
         });
+    }
+
+    private void refreshImages() {
+        getImages.cancel();
+        getImages = imgurApi.getImages();
+        loadImages();
     }
 
     private void showImageFragment() {
@@ -212,6 +209,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.action_refresh:
+                refreshImages();
             case R.id.menu_choose_subreddit:
                 Snackbar.make(findViewById(android.R.id.content), R.string.on_click, Snackbar.LENGTH_LONG).show();
                 showSubredditDialog();
