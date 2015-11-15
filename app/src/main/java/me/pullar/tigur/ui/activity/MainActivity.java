@@ -1,7 +1,5 @@
 package me.pullar.tigur.ui.activity;
 
-import android.app.ActionBar;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -12,19 +10,18 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.widget.ScrollView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -63,7 +60,7 @@ public class MainActivity extends AppCompatActivity
     private boolean mImageFragmentVisible;
     private ImageFragment imageFragment;
     private SwipeRefreshLayout swipeRefresh;
-    private android.support.v7.app.ActionBar mActionBar;
+    private Toolbar mToolBar;
     private float mActionBarHeight;
     private boolean mSubredditDialogVisible;
 
@@ -74,7 +71,9 @@ public class MainActivity extends AppCompatActivity
         mContext = getApplicationContext();
         setContentView(R.layout.activity_main);
 
-        mActionBar = getSupportActionBar();
+        mToolBar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolBar);
+
         mRvImageContent = (RecyclerView) findViewById(R.id.rv_image_content);
 
         final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
@@ -206,8 +205,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.image_menu, menu);
+        getMenuInflater().inflate(R.menu.image_menu, menu);
         return true;
     }
 
@@ -234,12 +232,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onScrollChanged() {
-//        float y = mRvImageContent.getScrollY();
-//        if (y >= mActionBarHeight && mActionBar.isShowing()) {
-//            mActionBar.hide();
-//        } else if ( y==0 && !mActionBar.isShowing()) {
-//            mActionBar.show();
-//        }
     }
 
 }

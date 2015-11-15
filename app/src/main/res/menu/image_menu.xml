@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="me.pullar.tigur.ui.activity.MainActivity">
     <item android:id="@+id/menu_choose_subreddit"
-        android:title="@string/menu_choose_subreddit">
+        android:title="@string/menu_choose_subreddit"
+        android:orderInCategory="100"
+        app:showAsAction="always">
     </item>
     <item android:id="@+id/menu_about"
-        android:title="@string/menu_about" />
+        android:title="@string/menu_about"
+        android:orderInCategory="100"
+        app:showAsAction="always"/>
 </menu>
