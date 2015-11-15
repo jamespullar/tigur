@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -22,6 +23,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -43,6 +46,7 @@ import static me.pullar.tigur.ui.adapter.ImageAdapter.OnItemClickListener;
 public class MainActivity extends AppCompatActivity
         implements ImageFragment.OnFragmentInteractionListener, ViewTreeObserver.OnScrollChangedListener {
     private static final String LIST_STATE_KEY = "image_list_key";
+    private static final String BUNDLE_RECYCLER_LAYOUT = "MainActivity.recycler.layout";
 
     private static Context mContext;
 
@@ -89,6 +93,12 @@ public class MainActivity extends AppCompatActivity
         mGridLayoutManager = new StaggeredGridLayoutManager(2, GridLayoutManager.VERTICAL);
         mGridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
 
+        if(savedInstanceState != null)
+        {
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+            mRvImageContent.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+        }
+        
         mImageFragmentVisible = false;
         mSubredditDialogVisible = false;
 
@@ -98,12 +108,22 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onRefresh() {
                 refreshImages();
-                swipeRefresh.setRefreshing(false);
             }
         });
 
         mRvImageContent.getViewTreeObserver().addOnScrollChangedListener(this);
 
+    }
+
+    @Override
+    public void onRestoreInstanceState(@Nullable Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if(savedInstanceState != null)
+        {
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+            mRvImageContent.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+        }
     }
 
     public static Context getContext() {
@@ -125,6 +145,7 @@ public class MainActivity extends AppCompatActivity
                     mImageAdapter = new ImageAdapter(response.body());
                     chooseLayoutManager();
                     mRvImageContent.setAdapter(mImageAdapter);
+                    swipeRefresh.setRefreshing(false);
                 }
             }
 
@@ -185,6 +206,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, mRvImageContent.getLayoutManager().onSaveInstanceState());
+    }
+
+    @Override
     public void onFragmentInteraction(Uri uri) {
     }
 
@@ -211,11 +238,14 @@ public class MainActivity extends AppCompatActivity
         switch(item.getItemId()) {
             case R.id.action_refresh:
                 refreshImages();
+                break;
             case R.id.menu_choose_subreddit:
                 Snackbar.make(findViewById(android.R.id.content), R.string.on_click, Snackbar.LENGTH_LONG).show();
                 showSubredditDialog();
+                break;
             case R.id.menu_about:
                 Snackbar.make(findViewById(android.R.id.content), R.string.on_click, Snackbar.LENGTH_LONG).show();
+                break;
         }
         return true;
     }
