@@ -58,6 +58,7 @@ public class ImageHolder extends RecyclerView.ViewHolder implements View.OnClick
 
     @Override
     public void onClick(View v) {
+
     }
 
     public void setOnItemClickListener(ImageAdapter.OnItemClickListener listener) {

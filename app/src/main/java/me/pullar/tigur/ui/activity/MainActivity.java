@@ -161,27 +161,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle state) {
-        super.onSaveInstanceState(state);
-
-        mListState = mRvImageContent.getLayoutManager().onSaveInstanceState();
-        state.putParcelable(LIST_STATE_KEY, mListState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle state) {
-        super.onRestoreInstanceState(state);
-
-        mListState = state.getParcelable(LIST_STATE_KEY);
-        if (mListState != null) {
-            mRvImageContent.getLayoutManager().onRestoreInstanceState(mListState);
-        }
-    }
-
-    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
     }
+
 
     @Override
     protected void onResume() {
@@ -251,12 +234,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onScrollChanged() {
-        float y = mRvImageContent.getScrollY();
-        if (y >= mActionBarHeight && mActionBar.isShowing()) {
-            mActionBar.hide();
-        } else if ( y==0 && !mActionBar.isShowing()) {
-            mActionBar.show();
-        }
+//        float y = mRvImageContent.getScrollY();
+//        if (y >= mActionBarHeight && mActionBar.isShowing()) {
+//            mActionBar.hide();
+//        } else if ( y==0 && !mActionBar.isShowing()) {
+//            mActionBar.show();
+//        }
     }
 
 }
